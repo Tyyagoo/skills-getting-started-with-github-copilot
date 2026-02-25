@@ -20,29 +20,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
-        // Build participants HTML (bulleted list) for the activity card
-        let participantsHtml = "";
-        if (details.participants && details.participants.length) {
-          participantsHtml =
-            '<ul class="participants-list" aria-label="Participants">' +
-            details.participants
-              .map(
-                (p) =>
-                  `<li class="participant-item"><span class="participant-email">${p}</span></li>`
-              )
-              .join("") +
-            "</ul>";
-        } else {
-          participantsHtml = '<p class="no-participants">No participants yet</p>';
-        }
+        // Create card contents using DOM methods (escape user data via textContent)
+        const titleEl = document.createElement("h4");
+        titleEl.textContent = name;
+        activityCard.appendChild(titleEl);
 
-        activityCard.innerHTML = `
-          <h4>${name}</h4>
-          <p>${details.description}</p>
-          <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-          ${participantsHtml}
-        `;
+        const descEl = document.createElement("p");
+        descEl.textContent = details.description;
+        activityCard.appendChild(descEl);
+
+        const scheduleEl = document.createElement("p");
+        const scheduleLabel = document.createElement("strong");
+        scheduleLabel.textContent = "Schedule: ";
+        scheduleEl.appendChild(scheduleLabel);
+        scheduleEl.appendChild(document.createTextNode(details.schedule));
+        activityCard.appendChild(scheduleEl);
+
+        const availEl = document.createElement("p");
+        const availLabel = document.createElement("strong");
+        availLabel.textContent = "Availability: ";
+        availEl.appendChild(availLabel);
+        availEl.appendChild(document.createTextNode(`${spotsLeft} spots left`));
+        activityCard.appendChild(availEl);
+
+        if (details.participants && details.participants.length) {
+          const ul = document.createElement("ul");
+          ul.className = "participants-list";
+          ul.setAttribute("aria-label", "Participants");
+
+          details.participants.forEach((p) => {
+            const li = document.createElement("li");
+            li.className = "participant-item";
+            const span = document.createElement("span");
+            span.className = "participant-email";
+            span.textContent = p;
+            li.appendChild(span);
+            ul.appendChild(li);
+          });
+
+          activityCard.appendChild(ul);
+        } else {
+          const noPart = document.createElement("p");
+          noPart.className = "no-participants";
+          noPart.textContent = "No participants yet";
+          activityCard.appendChild(noPart);
+        }
 
         activitiesList.appendChild(activityCard);
 
