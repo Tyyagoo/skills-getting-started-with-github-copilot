@@ -54,10 +54,35 @@ document.addEventListener("DOMContentLoaded", () => {
           details.participants.forEach((p) => {
             const li = document.createElement("li");
             li.className = "participant-item";
+
             const span = document.createElement("span");
             span.className = "participant-email";
             span.textContent = p;
             li.appendChild(span);
+
+            const delBtn = document.createElement("button");
+            delBtn.className = "participant-delete";
+            delBtn.setAttribute("aria-label", `Unregister ${p}`);
+            delBtn.textContent = "✕";
+            delBtn.addEventListener("click", async () => {
+              try {
+                const res = await fetch(
+                  `/activities/${encodeURIComponent(name)}/participants/${encodeURIComponent(p)}`,
+                  { method: "DELETE" }
+                );
+
+                if (res.ok) {
+                  await fetchActivities();
+                } else {
+                  const result = await res.json();
+                  console.error("Unregister failed:", result);
+                }
+              } catch (err) {
+                console.error("Error unregistering:", err);
+              }
+            });
+
+            li.appendChild(delBtn);
             ul.appendChild(li);
           });
 
