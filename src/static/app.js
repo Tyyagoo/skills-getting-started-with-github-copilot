@@ -4,6 +4,46 @@ document.addEventListener("DOMContentLoaded", () => {
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
 
+  // Toast helper: creates container on first use and shows a toast
+  function showToast(text, duration = 4000) {
+    let container = document.getElementById("toast-container");
+    if (!container) {
+      container = document.createElement("div");
+      container.id = "toast-container";
+      container.setAttribute("aria-live", "polite");
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement("div");
+    toast.className = "toast";
+
+    const icon = document.createElement("span");
+    icon.className = "toast-icon";
+    icon.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    `;
+
+    const txt = document.createElement("span");
+    txt.className = "toast-text";
+    txt.textContent = text;
+
+    toast.appendChild(icon);
+    toast.appendChild(txt);
+    container.appendChild(toast);
+
+    // Auto-remove with fade
+    setTimeout(() => {
+      toast.classList.add("toast-hide");
+      setTimeout(() => container.removeChild(toast), 300);
+    }, duration);
+  }
+
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
@@ -72,6 +112,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
                 if (res.ok) {
+                  const result = await res.json();
+                  showToast(result.message || "Participant unregistered");
                   await fetchActivities();
                 } else {
                   const result = await res.json();

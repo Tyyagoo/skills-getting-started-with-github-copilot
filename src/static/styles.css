@@ -190,3 +190,47 @@ footer {
   padding: 20px;
   color: #666;
 }
+
+/* Toasts (top-right) */
+#toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+}
+
+.toast {
+  background: #ffffff;
+  color: #c62828;
+  padding: 10px 14px;
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  font-weight: 600;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  border: 1px solid #c62828;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toast-hide {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.toast-icon svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  color: #c62828;
+}
+
+.toast-text {
+  color: #c62828;
+  font-weight: 600;
+}
